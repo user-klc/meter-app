@@ -67,16 +67,29 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .btn-header-add {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-            padding: 1px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    
+    /* Fixed equal dimensions ensure a perfect circle */
+    width: 32px; 
+    height: 32px;
+    
+    border-radius: 50%; /* Makes the box round */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0; /* Clear padding to prevent distortion */
+    box-sizing: border-box;
+}
+
+/* Target the icon inside the button specifically */
+.btn-header-add .material-icons {
+    font-size: 28px; /* Increases the size of the '+' icon */
+    line-height: 1;
+}
+
 
         .card {
             background: var(--white);
@@ -158,7 +171,7 @@
 
     <header id="top-bar">
         <div class="header-left">
-            <span class="material-icons" id="back-btn" style="display:none; margin-right: 15px; cursor:pointer;" onclick="showScreen('home')">arrow_back</span>
+            <span class="material-icons" id="back-btn" style="display:none; margin-right: 15px; font-size: 28px; cursor:pointer;" onclick="showScreen('home')">arrow_back</span>
             <h3 id="nav-title" style="margin:0">My Meter App</h3>
         </div>
         <button id="header-add-btn" class="btn-header-add" onclick="handleHeaderAdd()" style="display:none;">
