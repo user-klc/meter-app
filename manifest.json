@@ -1,0 +1,22 @@
+{
+  "name": "My Meter App",
+  "short_name": "Meter",
+  "start_url": "my_meter_app2.html",
+  "display": "standalone",
+  "background_color": "#95c595",
+  "theme_color": "#95c595",
+  "icons": [
+    {
+      "src": "home_energy_icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "home_energy_icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

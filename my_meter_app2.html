@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Meter App</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --sage: #95c595;
+            --sage-light: #f0f9f0;
+            --green: #4caf50;
+            --green-light: #edf7ed;
+            --electric: #4a8fe3;
+            --electric-light: #eef4fb;
+            --gas: #ff6b36;
+            --gas-light: #fff1ec;
+            --solar: #f9d71c;
+            --solar-light: #fff9db;
+            --white: #ffffff;
+            --current-main: var(--sage);
+            --current-bg: var(--white);
+        }
+
+        body { font-family: sans-serif; margin: 0; background: #f5f5f5; color: #333; }
+        
+        header { 
+            background: var(--current-main); 
+            padding: 10px 15px; 
+            display: flex; 
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s ease;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 50px;
+        }
+
+        .header-left { display: flex; align-items: center; }
+
+        .screen { display: none; padding: 20px; animation: fadeIn 0.2s; }
+        .active-screen { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn-header-add {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 1px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .card {
+            background: var(--white);
+            border: 4px solid var(--current-main);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .form-container {
+            background: var(--white);
+            border: 2px solid var(--current-main);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .btn-save {
+            background: var(--current-main);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .history-item { justify-content: space-between; border-left: 8px solid var(--current-main); }
+        
+        .usage-badge {
+            background: var(--current-bg);
+            color: var(--current-main);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .delete-btn { color: #ff4444; cursor: pointer; opacity: 0.6; }
+
+        .backup-restore-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-util {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="top-bar">
+        <div class="header-left">
+            <span class="material-icons" id="back-btn" style="display:none; margin-right: 15px; cursor:pointer;" onclick="showScreen('home')">arrow_back</span>
+            <h3 id="nav-title" style="margin:0">My Meter App</h3>
+        </div>
+        <button id="header-add-btn" class="btn-header-add" onclick="handleHeaderAdd()" style="display:none;">
+            <span class="material-icons">add</span>
+        </button>
+    </header>
+
+    <div id="home" class="screen active-screen">
+        <div class="card" onclick="showScreen('add-reading')" style="border-color: var(--green); background: var(--green-light)">
+            <span class="material-icons" style="font-size:40px; color: var(--green); margin-right:15px;">add_circle</span>
+            <b>Add New Reading</b>
+        </div>
+
+        <div class="card" onclick="showScreen('electric-history')" style="border-color: var(--electric); background: var(--electric-light)">
+            <span class="material-icons" style="font-size:40px; color: var(--electric); margin-right:15px;">bolt</span>
+            <div style="display: flex; flex-direction: column;">
+	            <b>Electric History</b>
+	            <small>View usage</small>
+			</div>
+        </div>
+
+        <div class="card" onclick="showScreen('gas-history')" style="border-color: var(--gas); background: var(--gas-light)">
+            <span class="material-icons" style="font-size:40px; color: var(--gas); margin-right:15px;">local_fire_department</span>
+            <div style="display: flex; flex-direction: column;">
+	            <b>Gas History</b>
+	            <small>View usage</small>
+            </div>
+        </div>
+
+        <div class="card" onclick="showScreen('solar-history')" style="border-color: var(--solar); background: var(--solar-light)">
+            <span class="material-icons" style="font-size:40px; color: var(--solar); margin-right:15px;">solar_power</span>
+            <div style="display: flex; flex-direction: column;">
+		        <b>Solar Panels</b>
+		        <small>View generation</small>
+		    </div>
+        </div>
+
+        <div class="backup-restore-container">
+            <button class="btn-util" onclick="exportData()">
+                <span class="material-icons">download</span> Backup
+            </button>
+            <button class="btn-util" onclick="document.getElementById('file-input').click()">
+                <span class="material-icons">upload</span> Restore
+            </button>
+            <input type="file" id="file-input" style="display:none" accept=".json" onchange="importData(event)">
+        </div>
+    </div>
+
+    <div id="add-reading" class="screen">
+        <div class="form-container">
+            <label>Select Meter</label>
+            <select id="meter-type" onchange="updateTheme()">
+                <option value="Electric">Electric</option>
+                <option value="Gas">Gas</option>
+                <option value="Solar">Solar</option>
+            </select>
+            <input type="number" id="reading-val" placeholder="Current Reading" step="0.1" inputmode="decimal">
+            <input type="date" id="reading-date">
+            <textarea id="reading-notes" placeholder="Notes (optional)"></textarea>
+            <button class="btn-save" onclick="saveData()">SAVE READING</button>
+        </div>
+    </div>
+
+    <div id="electric-history" class="screen"><div id="electric-list"></div></div>
+    <div id="gas-history" class="screen"><div id="gas-list"></div></div>
+    <div id="solar-history" class="screen"><div id="solar-list"></div></div>
+
+    <script>
+        let currentActiveType = 'Electric';
+        document.getElementById('reading-date').valueAsDate = new Date();
+
+        function applyThemeColors(type) {
+            const root = document.documentElement;
+            const themes = {
+                'Electric': ['var(--electric)', 'var(--electric-light)'],
+                'Gas': ['var(--gas)', 'var(--gas-light)'],
+                'Solar': ['var(--solar)', 'var(--solar-light)'],
+                'Home': ['var(--sage)', 'var(--white)']
+            };
+            const [main, bg] = themes[type] || themes['Home'];
+            root.style.setProperty('--current-main', main);
+            root.style.setProperty('--current-bg', bg);
+        }
+
+        function updateTheme() { applyThemeColors(document.getElementById('meter-type').value); }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+            document.getElementById(id).classList.add('active-screen');
+            const isHome = id === 'home';
+            document.getElementById('back-btn').style.display = isHome ? 'none' : 'block';
+            document.getElementById('header-add-btn').style.display = id.includes('history') ? 'block' : 'none';
+            if (isHome) {
+                document.getElementById('nav-title').innerText = "My Meter App";
+                applyThemeColors('Home');
+            } else if (id.includes('history')) {
+                const type = id.split('-')[0];
+                currentActiveType = type.charAt(0).toUpperCase() + type.slice(1);
+                document.getElementById('nav-title').innerText = currentActiveType + " History";
+                applyThemeColors(currentActiveType);
+                renderHistory(currentActiveType);
+            } else if (id === 'add-reading') {
+                document.getElementById('nav-title').innerText = "Add Reading";
+                updateTheme();
+            }
+        }
+
+        function handleHeaderAdd() {
+            document.getElementById('meter-type').value = currentActiveType;
+            showScreen('add-reading');
+        }
+
+        function saveData() {
+            const type = document.getElementById('meter-type').value;
+            const val = parseFloat(document.getElementById('reading-val').value);
+            const date = document.getElementById('reading-date').value;
+            if(isNaN(val)) return alert("Please enter a reading!");
+            let records = JSON.parse(localStorage.getItem('meter_records') || '[]');
+            records.push({ id: Date.now(), type, val, date, notes: document.getElementById('reading-notes').value });
+            localStorage.setItem('meter_records', JSON.stringify(records));
+            document.getElementById('reading-val').value = '';
+            document.getElementById('reading-notes').value = '';
+            alert("Saved!");
+            showScreen('home');
+        }
+
+        function renderHistory(type) {
+            const records = JSON.parse(localStorage.getItem('meter_records') || '[]');
+            const sortedRecords = records.filter(r => r.type === type).sort((a, b) => new Date(a.date) - new Date(b.date));
+            const historyWithUsage = sortedRecords.map((record, index) => {
+                let usage = index > 0 ? (record.val - sortedRecords[index - 1].val).toFixed(1) : null;
+                return { ...record, usage };
+            });
+            const displayList = historyWithUsage.reverse();
+            const listContainer = document.getElementById(`${type.toLowerCase()}-list`);
+            if (displayList.length === 0) {
+                listContainer.innerHTML = `<p style="text-align:center; color:#888; margin-top:30px;">No records yet.</p>`;
+                return;
+            }
+            listContainer.innerHTML = displayList.map(r => `
+                <div class="card history-item">
+                    <div style="flex-grow: 1;">
+                        <div style="font-size: 0.8em; color: #666;">${new Date(r.date).toLocaleDateString('en-GB')}</div>
+                        <div style="font-size: 1.25em; font-weight: bold; margin: 2px 0;">${r.val} <span style="font-size: 0.6em; color: #888;">units</span></div>
+                        <div class="usage-badge">${r.usage !== null ? `+${r.usage} used` : 'Initial Reading'}</div>
+                        ${r.notes ? `<div style="font-size: 0.85em; margin-top: 5px; color: #555; font-style: italic;">"${r.notes}"</div>` : ''}
+                    </div>
+                    <span class="material-icons delete-btn" onclick="deleteReading(${r.id}, '${type}')">delete_outline</span>
+                </div>
+            `).join('');
+        }
+
+        function deleteReading(id, type) {
+            if(!confirm("Delete this entry?")) return;
+            let records = JSON.parse(localStorage.getItem('meter_records') || '[]');
+            localStorage.setItem('meter_records', JSON.stringify(records.filter(r => r.id !== id)));
+            renderHistory(type);
+        }
+
+        // Backup and Restore
+        function exportData() {
+            const data = localStorage.getItem('meter_records');
+            if (!data || data === '[]') return alert("No data to backup!");
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `meter_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    if (confirm("Restore data? This replaces current records.")) {
+                        localStorage.setItem('meter_records', JSON.stringify(json));
+                        location.reload();
+                    }
+                } catch { alert("Invalid backup file."); }
+            };
+            reader.readAsText(file);
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("PWA: Service Worker Registered"));
+        }
+    </script>
+</body>
+</html>
