@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meter-tracker-v1.2';
+const CACHE_NAME = 'meter-tracker-v2';
 const ASSETS = [
   'my_meter_app2.html',
   'manifest.json',
