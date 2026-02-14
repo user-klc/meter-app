@@ -1,7 +1,7 @@
 {
   "name": "My Meter App",
   "short_name": "Meter",
-  "start_url": "my_meter_app2.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#95c595",
   "theme_color": "#95c595",
