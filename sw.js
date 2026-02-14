@@ -2,7 +2,7 @@ const CACHE_NAME = 'meter-tracker-v1.2';
 const ASSETS = [
   'my_meter_app2.html',
   'manifest.json',
-  'https://fonts.googleapis.com/icon?family=Material+Icons'
+  'hassets/MaterialIcons-Regular.woff2' 
 ];
 
 // Install the service worker and cache files
